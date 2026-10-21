@@ -1,0 +1,283 @@
+#version 460
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 fsr4-vk contributors.
+// See LICENSE in the project root.
+
+#extension GL_EXT_buffer_reference : require
+#extension GL_EXT_samplerless_texture_functions : require
+
+layout(local_size_x = 8, local_size_y = 8) in;
+layout(set = 0, binding = 0) uniform texture2D inputs[128];
+#if READ_OUTPUT
+#extension GL_EXT_shader_image_load_formatted : require
+layout(set = 3, binding = 0) uniform image2D outputs[128];
+#else
+layout(set = 3, binding = 0) uniform writeonly image2D outputs[128];
+#endif
+
+layout(buffer_reference, std430, buffer_reference_align = 4) readonly buffer FontData {
+    uint pixels[];
+};
+layout(buffer_reference, std430, buffer_reference_align = 8) readonly buffer OverlayData {
+    uvec2 renderSize;
+    uvec2 motionSize;
+    vec2 motionScale;
+    vec2 motionJitter;
+    float preExposure;
+    uint flags;
+    FontData font;
+    uint text[672];
+};
+layout(push_constant, std430) uniform Push {
+    OverlayData data;
+    uint width;
+    uint height;
+    uint fontPixels;
+    uint debugView;
+    uint headerWidth;
+    uint headerHeight;
+} pc;
+
+// The 28px font uses 40x44 cells, 4px padding and an 8px top crop.
+// Distances are encoded as 128 + distance * 16.
+float fontTexel(uint glyph, ivec2 pixel) {
+    if (any(lessThan(pixel, ivec2(0))) || any(greaterThanEqual(pixel, ivec2(40, 44))))
+        return -8;
+    uint index = glyph * (40 * 44) + uint(pixel.y) * 40 + uint(pixel.x);
+    uint packed = pc.data.font.pixels[index / 4];
+    return (float((packed >> ((index % 4) * 8)) & 255) - 128) / 16;
+}
+
+float glyphDistance(uint glyph, vec2 pixel) {
+    pixel -= 0.5;
+    ivec2 base = ivec2(floor(pixel));
+    vec2 weight = fract(pixel);
+    return mix(mix(fontTexel(glyph, base), fontTexel(glyph, base + ivec2(1, 0)), weight.x),
+               mix(fontTexel(glyph, base + ivec2(0, 1)),
+                   fontTexel(glyph, base + ivec2(1, 1)), weight.x), weight.y);
+}
+
+vec2 outlinedText(vec2 pixel, uint line, uint pixels) {
+    float scale = float(pixels) / 28;
+    vec2 point = (pixel + 0.5) / scale;
+    if (point.y < -4 || point.y > 36) return vec2(0);
+    uint first = 0, end = 96;
+    while (first < end) {
+        uint middle = (first + end) / 2;
+        uint origin = pc.data.text[line * 96 + middle] >> 8;
+        if (float(origin) <= point.x) first = middle + 1;
+        else end = middle;
+    }
+    // Combine outlines before drawing so they cannot cover neighboring white text.
+    float distance = -8;
+    for (int offset = -1; offset <= 1; ++offset) {
+        int index = int(first) - 1 + offset;
+        if (index < 0 || index >= 96) continue;
+        uint run = pc.data.text[line * 96 + uint(index)];
+        uint glyph = run & 255;
+        if (glyph >= 95) continue;
+        vec2 local = point + vec2(4 - float(run >> 8), 8);
+        distance = max(distance, glyphDistance(glyph, local));
+    }
+    distance *= scale;
+    return vec2(smoothstep(-0.55, 0.55, distance),
+                smoothstep(-max(2.0, 3 * scale) - 0.6, -max(2.0, 3 * scale) + 0.6, distance));
+}
+
+uint detailPixels() { return max(14u, (pc.fontPixels * 6 + 3) / 7); }
+
+// Blend UI colors in display space, then restore the output transfer and exposure.
+// This prevents bright HDR fringes around antialiased text.
+vec3 srgbToLinear(vec3 c) {
+    return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), greaterThan(c, vec3(0.04045)));
+}
+vec3 linearToSrgb(vec3 c) {
+    return mix(12.92 * c, 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055,
+               greaterThan(c, vec3(0.0031308)));
+}
+vec3 pqToLinear(vec3 c) {
+    vec3 p = pow(max(c, vec3(0)), vec3(1.0 / 78.84375));
+    return pow(max(p - 0.8359375, vec3(0)) / max(18.8515625 - 18.6875 * p, vec3(1e-6)),
+               vec3(1.0 / 0.1593017578125)) * (10000.0 / 203.0);
+}
+vec3 linearToPq(vec3 c) {
+    vec3 p = pow(max(c, vec3(0)) * (203.0 / 10000.0), vec3(0.1593017578125));
+    return pow((0.8359375 + 18.8515625 * p) / (1 + 18.6875 * p), vec3(78.84375));
+}
+vec3 displayColor(vec3 c) {
+    uint transfer = (pc.data.flags >> 3) & 3;
+    if (transfer == 3) return linearToSrgb(pqToLinear(c));
+    if (transfer != 0) return c;
+    c = max(c, vec3(0));
+    if ((pc.data.flags & 1) != 0) {
+        c /= pc.data.preExposure;
+        c /= 1 + c;
+    }
+    return linearToSrgb(c);
+}
+vec3 outputColor(vec3 c, bool motionField) {
+    uint transfer = (pc.data.flags >> 3) & 3;
+    if (transfer == 3) return linearToPq(srgbToLinear(c));
+    if (transfer != 0) return c;
+    c = srgbToLinear(c);
+    // Keep motion colors within one linear unit before applying pre-exposure.
+    // Inverse tone mapping would make saturated colors excessively bright.
+    if (motionField && (pc.data.flags & 1) != 0)
+        return min(c * pc.data.preExposure, vec3(64000));
+    if ((pc.data.flags & 1) != 0)
+        c = min(min(c / max(1 - c, vec3(1.0 / 256)), vec3(256)) * pc.data.preExposure,
+                vec3(64000));
+    return c;
+}
+
+vec3 inputPixel(uint panel, vec2 uv) {
+    ivec2 renderPixel = min(ivec2(uv * pc.data.renderSize), ivec2(pc.data.renderSize) - 1);
+    if (panel == 0) {
+        vec3 color = texelFetch(inputs[3], renderPixel, 0).rgb;
+        uint transfer = (pc.data.flags >> 3) & 3;
+        if (transfer == 0) color /= pc.data.preExposure;
+        else if (transfer == 3) color = pqToLinear(color);
+        else color = srgbToLinear(max(color, vec3(0)));
+        if (any(isnan(color)) || any(isinf(color))) return vec3(1, 0, 1);
+        color = max(color, vec3(0));
+        color = (pc.data.flags & 1) != 0 ? color / (1 + color) : clamp(color, 0, 1);
+        return linearToSrgb(color);
+    }
+    if (panel == 1) {
+        float depth = texelFetch(inputs[2], renderPixel, 0).r;
+        if (isnan(depth) || isinf(depth)) return vec3(1, 0, 1);
+        // Show nearby surfaces as bright in both depth modes.
+        if ((pc.data.flags & 32) == 0) depth = 1 - depth;
+        return vec3(pow(clamp(depth, 0, 1), 0.25));
+    }
+    // This is the current-frame blend weight. Higher values mean less history.
+    ivec2 outputPixel = min(ivec2(uv * vec2(pc.width, pc.height)), ivec2(pc.width, pc.height) - 1);
+    float current = texelFetch(inputs[20], outputPixel, 0).r;
+    if (isnan(current) || isinf(current)) return vec3(1, 0, 1);
+    float luminance = 0.15;
+    return mix(vec3(luminance), vec3(0.9, 0, 0.9), clamp(current, 0, 1));
+}
+
+
+// Convert normalized motion to output pixels for either motion-vector resolution.
+vec2 motionPixels(vec2 uv) {
+    ivec2 pixel = clamp(ivec2(uv * pc.data.motionSize), ivec2(0), ivec2(pc.data.motionSize) - 1);
+    vec2 motion = texelFetch(inputs[1], pixel, 0).xy * pc.data.motionScale;
+    return (motion - pc.data.motionJitter) * vec2(pc.width, pc.height);
+}
+
+bool finiteMotion(vec2 motion) {
+    return !any(isnan(motion)) && !any(isinf(motion));
+}
+
+vec3 directionColor(vec2 direction) {
+    // Red points right, yellow-green down, cyan left and violet up.
+    float hue = atan(direction.y, direction.x) / 6.2831853;
+    return clamp(abs(fract(hue + vec3(0, 2.0 / 3, 1.0 / 3)) * 6 - 3) - 1, 0, 1);
+}
+
+vec3 motionPreview(vec2 uv, vec2 imageSize) {
+    vec2 motion = motionPixels(uv);
+    if (!finiteMotion(motion)) return vec3(1, 0, 1);
+    float speed = length(motion);
+    // Use a fixed scale that reveals subpixel motion and keeps zero motion dark.
+    float strength = sqrt(clamp(log2(1 + speed) / log2(33.0), 0, 1));
+    vec3 color = mix(vec3(0.035, 0.043, 0.055),
+                     speed > 0 ? directionColor(motion) : vec3(0), strength);
+
+    vec2 point = uv * imageSize;
+    float radius = clamp(float(pc.fontPixels), 14, 28);
+    vec2 key = point - vec2(imageSize.x - radius - 10, imageSize.y - radius - 10);
+    float r = length(key);
+    if (r < radius + 3) {
+        color = vec3(0.025, 0.03, 0.04);
+        if (r > 1 && r < radius)
+            color = mix(vec3(0.035, 0.043, 0.055), directionColor(key), min(r / radius, 1));
+    }
+    return color;
+}
+
+vec3 debugView(ivec2 pixel, float detailsY, out bool motionField) {
+    motionField = false;
+    vec3 background = vec3(0.038, 0.045, 0.058);
+    float inset = max(8.0, round(float(pc.fontPixels) * 0.7));
+    if (pixel.y < int(pc.headerHeight)) {
+        vec2 title = outlinedText(vec2(pixel) - vec2(inset, 6), 0, pc.fontPixels);
+        vec2 detail = outlinedText(vec2(pixel) - vec2(inset, detailsY + 6), 1, detailPixels());
+        vec3 color = mix(background, vec3(0.64, 0.69, 0.76), detail.x);
+        return mix(color, vec3(1), title.x);
+    }
+    vec2 available = vec2(pc.width, pc.height - pc.headerHeight);
+    vec2 tile = max((available - vec2(3 * inset)) / 2, vec2(1));
+    vec2 relative = vec2(pixel) - vec2(inset, pc.headerHeight + inset);
+    ivec2 cell = clamp(ivec2(floor(relative / (tile + inset))), ivec2(0), ivec2(1));
+    vec2 local = relative - vec2(cell) * (tile + inset);
+    if (any(lessThan(local, vec2(0))) || any(greaterThanEqual(local, tile))) return background;
+
+    uint panel = uint(cell.y * 2 + cell.x);
+    float labelHeight = ceil(32.0 * float(detailPixels()) / 28) + 10;
+    vec3 color = vec3(0.065, 0.077, 0.095);
+    if (local.y < labelHeight) {
+        vec2 text = outlinedText(local - vec2(12, 4), panel + 3, detailPixels());
+        color = mix(color, vec3(0.92, 0.94, 0.97), text.x);
+        if (local.y >= labelHeight - 1) color = vec3(0.15, 0.17, 0.20);
+    } else {
+        vec2 area = max(tile - vec2(2, labelHeight + 1), vec2(1));
+        vec2 size = vec2(pc.width, pc.height);
+        vec2 imageSize = size * min(area.x / size.x, area.y / size.y);
+        vec2 uv = (local - vec2(1, labelHeight) - (area - imageSize) * 0.5) / imageSize;
+        color = vec3(0.014, 0.018, 0.024);
+        if (all(greaterThanEqual(uv, vec2(0))) && all(lessThan(uv, vec2(1)))) {
+            motionField = panel == 2;
+            color = motionField ? motionPreview(uv, imageSize) : inputPixel(panel, uv);
+        }
+
+    }
+    if (local.x < 1 || local.x >= tile.x - 1 || local.y < 1 || local.y >= tile.y - 1) {
+        color = vec3(0.15, 0.17, 0.20);
+        motionField = false;
+    }
+    return color;
+}
+
+
+void main() {
+    ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
+    if (pixel.x >= int(pc.width) || pixel.y >= int(pc.height)) return;
+    float detailsY = float((36 * pc.fontPixels + 27) / 28 + 2);
+    float statusY = detailsY + float((36 * detailPixels() + 27) / 28 + 2);
+    vec3 color;
+    float alpha = 1;
+    bool motionField = false;
+    if (pc.debugView == 0) {
+        if (pixel.x >= int(pc.headerWidth) || pixel.y >= int(pc.headerHeight)) return;
+        vec2 title = outlinedText(vec2(pixel) - vec2(4 * float(pc.fontPixels) / 28, 0),
+                                  0, pc.fontPixels);
+        vec2 details = outlinedText(vec2(pixel) - vec2(4 * float(detailPixels()) / 28, detailsY),
+                                    1, detailPixels());
+        vec2 status = outlinedText(vec2(pixel) - vec2(4 * float(detailPixels()) / 28, statusY),
+                                  2, detailPixels());
+        vec2 text = max(max(title, details), status);
+        alpha = text.y;
+        if (alpha == 0) return;
+        color = vec3(text.x / alpha);
+        pixel += ivec2(12);
+        if (pixel.x >= int(pc.width) || pixel.y >= int(pc.height)) return;
+#if READ_OUTPUT
+        vec4 background = (pc.data.flags & 4) != 0 ? imageLoad(outputs[11], pixel)
+                                                  : imageLoad(outputs[2], pixel);
+            vec3 blended = outputColor(mix(displayColor(background.rgb), color, alpha), false);
+        if ((pc.data.flags & 4) != 0) imageStore(outputs[11], pixel, vec4(blended, background.a));
+        else imageStore(outputs[2], pixel, vec4(blended, background.a));
+        return;
+#else
+        // Use opaque outlines when reading the output format is unsupported.
+        if (alpha < 0.5) return;
+#endif
+    } else {
+        color = debugView(pixel, detailsY, motionField);
+    }
+    color = outputColor(color, motionField);
+    if ((pc.data.flags & 4) != 0) imageStore(outputs[11], pixel, vec4(color, 1));
+    else imageStore(outputs[2], pixel, vec4(color, 1));
+}

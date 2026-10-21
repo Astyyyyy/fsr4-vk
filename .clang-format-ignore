@@ -1,0 +1,7 @@
+# Never rewrite vendored code, generated outputs or locked assets.
+third_party/**
+build/**
+assets/**
+
+# Reproducibly generated diagnostic assets.
+src/diagnostics/overlay_font.hpp

@@ -1,0 +1,7 @@
+/assets/
+/build/
+__pycache__/
+*.pyc
+*.log
+*.csv
+*.rgp

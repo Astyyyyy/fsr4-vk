@@ -1,0 +1,35 @@
+# Use clang-format 22 for reproducible formatting and explicit control-flow braces.
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: c++20
+IndentWidth: 4
+ContinuationIndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+BreakBeforeBraces: Attach
+NamespaceIndentation: None
+AccessModifierOffset: -4
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: None
+AllowShortLoopsOnASingleLine: false
+BinPackArguments: false
+BinPackParameters: OnePerLine
+PointerAlignment: Left
+ReferenceAlignment: Left
+DerivePointerAlignment: false
+SortIncludes: Never
+IncludeBlocks: Preserve
+ReflowComments: Never
+BreakStringLiterals: false
+InsertBraces: true
+RemoveBracesLLVM: false
+QualifierAlignment: Leave
+FixNamespaceComments: false
+# Separate definitions automatically and retain manually grouped declarations.
+SeparateDefinitionBlocks: Always
+MaxEmptyLinesToKeep: 1
+EmptyLineBeforeAccessModifier: Always
