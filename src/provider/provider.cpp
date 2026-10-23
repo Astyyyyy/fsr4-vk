@@ -455,8 +455,7 @@ bool physicalDeviceSupportsFp8Matrices(VkPhysicalDevice physical_device) {
 
 bool physicalDeviceSupportsFp8(VkPhysicalDevice physical_device) {
     if (!physicalDeviceHasExtension(physical_device, VK_EXT_SHADER_FLOAT8_EXTENSION_NAME) ||
-        !physicalDeviceHasExtension(physical_device, VK_KHR_COOPERATIVE_MATRIX_EXTENSION_NAME) ||
-        !physicalDeviceHasExtension(physical_device, VK_NV_COOPERATIVE_MATRIX_2_EXTENSION_NAME)) {
+        !physicalDeviceHasExtension(physical_device, VK_KHR_COOPERATIVE_MATRIX_EXTENSION_NAME)) {
         return false;
     }
 
@@ -464,21 +463,18 @@ bool physicalDeviceSupportsFp8(VkPhysicalDevice physical_device) {
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT8_FEATURES_EXT};
     VkPhysicalDeviceCooperativeMatrixFeaturesKHR cooperative{
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_KHR};
-    VkPhysicalDeviceCooperativeMatrix2FeaturesNV cooperative2{
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_FEATURES_NV};
     VkPhysicalDeviceShaderFloat16Int8Features float16{
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES};
     VkPhysicalDeviceFeatures2 features{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2};
 
     features.pNext = &cooperative;
     cooperative.pNext = &float8;
-    float8.pNext = &cooperative2;
-    cooperative2.pNext = &float16;
+    float8.pNext = &float16;
     vkGetPhysicalDeviceFeatures2(physical_device, &features);
 
     return cooperative.cooperativeMatrix && float8.shaderFloat8 &&
-           float8.shaderFloat8CooperativeMatrix && cooperative2.cooperativeMatrixConversions &&
-           float16.shaderFloat16 && physicalDeviceSupportsFp8Matrices(physical_device);
+           float8.shaderFloat8CooperativeMatrix && float16.shaderFloat16 &&
+           physicalDeviceSupportsFp8Matrices(physical_device);
 }
 
 } // namespace
