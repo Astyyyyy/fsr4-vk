@@ -14,6 +14,16 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 
+
+def build_environment():
+    environment = os.environ.copy()
+    if os.name == "nt":
+        # Separate tool builds change PATH; reused MSBuild nodes retain stale
+        # environments and can fail with duplicate Path/PATH entries.
+        environment["MSBUILDDISABLENODEREUSE"] = "1"
+    return environment
+
+
 def find_tool(name, override=None, environment=None):
     selected = override or (os.environ.get(environment) if environment else None)
     if selected:
@@ -54,6 +64,26 @@ def find_tool(name, override=None, environment=None):
     hint = f" or set {environment}" if environment else ""
     raise ValueError(f"{name} not found; install it on PATH{hint}, or provide its path")
 
+def apply_translator_patch(source):
+    """Keep all CFG sorts consistent with the catalog's libstdc++ ordering."""
+    git = shutil.which("git")
+    if not git:
+        raise ValueError("Git is required to apply the dxil-spirv catalog-order patch")
+    patch = ROOT / "third_party/patches/dxil-spirv-portable-sort.patch"
+    command = [git, "-C", str(source), "apply", "--ignore-space-change", "--whitespace=error-all"]
+    applied = subprocess.run(
+        [*command, "--reverse", "--check", str(patch)],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    )
+    if applied.returncode == 0:
+        return
+    try:
+        subprocess.run([*command, "--check", str(patch)], check=True)
+        subprocess.run([*command, str(patch)], check=True)
+    except subprocess.CalledProcessError as error:
+        raise ValueError("Applying the dxil-spirv catalog-order patch failed") from error
+
+
 def build_translator():
     source = ROOT / "third_party/dxil-spirv"
     build = ROOT / "build/tools/dxil-spirv"
@@ -62,18 +92,19 @@ def build_translator():
         raise ValueError("CMake is required to build the dxil-spirv submodule")
     if not (source / "third_party/SPIRV-Tools/CMakeLists.txt").is_file():
         raise ValueError("Initialize dxil-spirv dependencies: git submodule update --init --recursive")
+    apply_translator_patch(source)
     try:
         if not (build / "CMakeCache.txt").is_file():
             subprocess.run(
                 [cmake, "-S", str(source), "-B", str(build),
                  "-DCMAKE_BUILD_TYPE=Release", "-DDXIL_SPIRV_CLI=ON",
                  "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"],
-                check=True,
+                check=True, env=build_environment(),
             )
         subprocess.run(
             [cmake, "--build", str(build), "--config", "Release", "--parallel", "4",
              "--target", "dxil-spirv", "dxil-spirv-c-shared"],
-            check=True,
+            check=True, env=build_environment(),
         )
     except subprocess.CalledProcessError as error:
         raise ValueError("Building the bundled dxil-spirv translator failed") from error
@@ -141,13 +172,13 @@ def build_host_tools(name, options, targets):
         subprocess.run([
             cmake, "-S", str(source), "-B", str(build), "-DCMAKE_BUILD_TYPE=Release",
             "-DCMAKE_POLICY_VERSION_MINIMUM=3.5", "-DBUILD_SHARED_LIBS=OFF",
-            f"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY={binary}",
-            f"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE={binary}", *options,
-        ], check=True)
+            f"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY={binary.as_posix()}",
+            f"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE={binary.as_posix()}", *options,
+        ], check=True, env=build_environment())
         subprocess.run([
             cmake, "--build", str(build), "--config", "Release", "--parallel", "4",
             "--target", *targets,
-        ], check=True)
+        ], check=True, env=build_environment())
     except subprocess.CalledProcessError as error:
         raise ValueError(f"Building {name} host tools failed") from error
     return binary.resolve()
@@ -165,7 +196,8 @@ def patching_tools(override=None):
             raise ValueError("SPIRV-Headers submodule is missing; run git submodule update --init --recursive")
         binary = build_host_tools("SPIRV-Tools", (
             "-DSPIRV_SKIP_TESTS=ON", "-DSPIRV_WERROR=OFF", "-DSPIRV_SKIP_EXECUTABLES=OFF",
-            f"-DSPIRV-Headers_SOURCE_DIR={headers}",
+            # CMake may reparse cache values as source; backslashes become escapes.
+            f"-DSPIRV-Headers_SOURCE_DIR={headers.as_posix()}",
         ), names)
     if not all((binary / host_executable(name)).is_file() for name in names):
         raise ValueError("Incomplete SPIRV-Tools directory: " + str(binary))

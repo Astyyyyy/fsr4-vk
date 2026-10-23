@@ -42,7 +42,7 @@ def stock_base_alias(patched):
     else:
         raise ValueError("Unknown patch family: " + patched)
     name = re.sub(r"\.(win-opt|win-dotacc|hrmv)(?=\.(spv|delta)$)", "", tail[-1])
-    return str(Path(*parts[:3], "stock", *tail[:-1], name).with_suffix(".spv"))
+    return Path(*parts[:3], "stock", *tail[:-1], name).with_suffix(".spv").as_posix()
 
 
 def validate_stock_layout(manifest, targets, root=None):
@@ -286,9 +286,9 @@ def select_pack(assets, output, omit_8k=False, native_only=False):
             row["file"] = next(k for k in names[previous] if "/shaders/" in k)
         row["file"] = combined_int8_windows_path(row["file"])
         if target[:4] == b"\x03\x02\x23\x07":
-            row["file"] = str(
-                Path(row["file"]).with_suffix(".spv" if parent is None else ".delta")
-            )
+            row["file"] = Path(row["file"]).with_suffix(
+                ".spv" if parent is None else ".delta"
+            ).as_posix()
         row["stored_size"] = len(blob)
         row["stored_sha256"] = hashlib.sha256(blob).hexdigest()
         dest = a.output / row["file"]

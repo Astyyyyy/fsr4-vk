@@ -1,0 +1,426 @@
+From: FakeMichau <49685661+FakeMichau@users.noreply.github.com>
+Subject: [PATCH] Make CFG sort ordering independent of the C++ standard library
+
+Use the libstdc++ introsort ordering throughout cfg_structurizer.cpp so MSVC
+and libc++ builds reproduce the reference SPIR-V. Preserve stable_sort calls.
+
+diff --git a/cfg_structurizer.cpp b/cfg_structurizer.cpp
+index a8521804f8fb8ee3552dbb2d6f965bab6b8f996c..235e8dc0865382e4ab3b4552b935c415cdf2b868 100644
+--- a/cfg_structurizer.cpp
++++ b/cfg_structurizer.cpp
+@@ -27,6 +27,7 @@
+ #include "logging.hpp"
+ #include "node.hpp"
+ #include "node_pool.hpp"
++#include "portable_sort.hpp"
+ #include "spirv_module.hpp"
+ #include <algorithm>
+ #include <assert.h>
+@@ -212,7 +213,7 @@
+ static void validate_phi(const PHI &phi)
+ {
+ 	auto incomings = phi.incoming;
+-	std::sort(incomings.begin(), incomings.end(), [](const IncomingValue &a, const IncomingValue &b) {
++	portable_sort(incomings.begin(), incomings.end(), [](const IncomingValue &a, const IncomingValue &b) {
+ 		return a.block < b.block;
+ 	});
+ 	auto itr = std::unique(incomings.begin(), incomings.end(), [](const IncomingValue &a, const IncomingValue &b) {
+@@ -1999,7 +2000,7 @@
+ 				// Iteratively, we need to recompute the dominance frontier for all preds.
+ 				// When we eliminate nodes like this, we might cause the pred blocks to become degenerate in
+ 				// future iterations in this loop.
+-				std::sort(tmp_pred.begin(), tmp_pred.end(), [](const CFGNode *a, const CFGNode *b) {
++				portable_sort(tmp_pred.begin(), tmp_pred.end(), [](const CFGNode *a, const CFGNode *b) {
+ 					return a->forward_post_visit_order < b->forward_post_visit_order;
+ 				});
+ 
+@@ -2105,7 +2106,7 @@
+ 
+ 	const auto sort_unique_node_vector = [](Vector<CFGNode *> &nodes) {
+ 		// Fixup nodes in order.
+-		std::sort(nodes.begin(), nodes.end(), [](const CFGNode *a, const CFGNode *b) -> bool {
++		portable_sort(nodes.begin(), nodes.end(), [](const CFGNode *a, const CFGNode *b) -> bool {
+ 			return a->forward_post_visit_order > b->forward_post_visit_order;
+ 		});
+ 		nodes.erase(std::unique(nodes.begin(), nodes.end()), nodes.end());
+@@ -2168,7 +2169,7 @@
+ 				for (auto *non_local_node : itr->second)
+ 					local_consumers_sorted.push_back(non_local_node);
+ 
+-				std::sort(local_consumers_sorted.begin(), local_consumers_sorted.end(),
++				portable_sort(local_consumers_sorted.begin(), local_consumers_sorted.end(),
+ 						  [](const CFGNode *a, const CFGNode *b) {
+ 							  return a->forward_post_visit_order < b->forward_post_visit_order;
+ 						  });
+@@ -2211,7 +2212,7 @@
+ 	}
+ 
+ 	// Ensure ordering so that output remains stable.
+-	std::sort(rewrites.begin(), rewrites.end(), [](const Rewrite &a, const Rewrite &b) {
++	portable_sort(rewrites.begin(), rewrites.end(), [](const Rewrite &a, const Rewrite &b) {
+ 		return a.id < b.id;
+ 	});
+ 
+@@ -2313,7 +2314,7 @@
+ 	}
+ 
+ 	// Resolve phi-nodes top-down since PHI nodes may depend on other PHI nodes.
+-	std::sort(phi_nodes.begin(), phi_nodes.end(),
++	portable_sort(phi_nodes.begin(), phi_nodes.end(),
+ 	          [](const PHINode &a, const PHINode &b) { return a.block->forward_post_visit_order > b.block->forward_post_visit_order; });
+ 
+ 	for (auto &phi_node : phi_nodes)
+@@ -3054,7 +3055,7 @@
+ 				exits.reserve(merge_tracer.loop_exits.size());
+ 				for (auto *exit_node : merge_tracer.loop_exits)
+ 					exits.push_back(exit_node);
+-				std::sort(exits.begin(), exits.end(), [](const CFGNode *a, const CFGNode *b) {
++				portable_sort(exits.begin(), exits.end(), [](const CFGNode *a, const CFGNode *b) {
+ 					return a->forward_post_visit_order > b->forward_post_visit_order;
+ 				});
+ 
+@@ -3262,7 +3263,7 @@
+ 	for (auto *node : nodes)
+ 		sorted.push_back(node);
+ 
+-	std::sort(sorted.begin(), sorted.end(),
++	portable_sort(sorted.begin(), sorted.end(),
+ 	          [](const CFGNode *a, const CFGNode *b) { return a->forward_post_visit_order > b->forward_post_visit_order; });
+ 	return sorted;
+ }
+@@ -4054,7 +4055,7 @@
+ 
+ 	// Emit inner constructs before outer constructs.
+ 	// This way we get natural nesting in case of certain if/else if ladders.
+-	std::sort(sorted_construct.begin(), sorted_construct.end(), [](const CFGNode *a, const CFGNode *b) {
++	portable_sort(sorted_construct.begin(), sorted_construct.end(), [](const CFGNode *a, const CFGNode *b) {
+ 		return a->forward_post_visit_order < b->forward_post_visit_order;
+ 	});
+ 
+@@ -4344,7 +4345,7 @@
+ void CFGStructurizer::filter_serialization_candidates(Vector<CFGNode *> &candidates) const
+ {
+ 	// Ensure stable order.
+-	std::sort(candidates.begin(), candidates.end(), [](const CFGNode *a, const CFGNode *b)
++	portable_sort(candidates.begin(), candidates.end(), [](const CFGNode *a, const CFGNode *b)
+ 	          { return a->forward_post_visit_order < b->forward_post_visit_order; });
+ 
+ 	auto *common_idom = candidates[0];
+@@ -4517,7 +4518,7 @@
+ 				collect_all_paths_to_pdom = false;
+ 
+ 				// Ensure stable order.
+-				std::sort(complex_inner_constructs.begin(), complex_inner_constructs.end(), [](const CFGNode *a, const CFGNode *b) {
++				portable_sort(complex_inner_constructs.begin(), complex_inner_constructs.end(), [](const CFGNode *a, const CFGNode *b) {
+ 					return a->forward_post_visit_order > b->forward_post_visit_order;
+ 				});
+ 
+@@ -4897,7 +4898,7 @@
+ 	}
+ 
+ 	// First, sort so that any fallthrough parent comes before fallthrough target.
+-	std::sort(node->ir.terminator.cases.begin(), node->ir.terminator.cases.end(),
++	portable_sort(node->ir.terminator.cases.begin(), node->ir.terminator.cases.end(),
+ 			  [](const Terminator::Case &a, const Terminator::Case &b)
+ 			  { return a.node->forward_post_visit_order > b.node->forward_post_visit_order; });
+ 
+@@ -6098,7 +6099,7 @@
+ 	while (candidates.size() != 1)
+ 	{
+ 		// Sort candidates by post visit order.
+-		std::sort(candidates.begin(), candidates.end(),
++		portable_sort(candidates.begin(), candidates.end(),
+ 		          [](const CFGNode *a, const CFGNode *b) { return a->forward_post_visit_order > b->forward_post_visit_order; });
+ 
+ 		// We reached exit without merging execution, there is no common post dominator.
+@@ -6491,7 +6492,7 @@
+ 			if (invalid_frontier)
+ 				continue;
+ 
+-			std::sort(frontiers.begin(), frontiers.end(), [](const CFGNode *a, const CFGNode *b)
++			portable_sort(frontiers.begin(), frontiers.end(), [](const CFGNode *a, const CFGNode *b)
+ 			{
+ 				return a->forward_post_visit_order > b->forward_post_visit_order;
+ 			});
+@@ -7158,7 +7159,7 @@
+ 			                      n->dominance_frontier.end());
+ 		}
+ 
+-		std::sort(frontier_nodes.begin(), frontier_nodes.end());
++		portable_sort(frontier_nodes.begin(), frontier_nodes.end());
+ 		const CFGNode *frontier_base = nullptr;
+ 		uint32_t count = 0;
+ 
+@@ -7205,7 +7206,7 @@
+ 		{
+ 			// If the frontiers are all different, and it's not the merge block, something is afoot.
+ 			// Don't sort by pointer since we care about codegen invariance.
+-			std::sort(frontier_nodes.begin(), frontier_nodes.end(), [](const CFGNode *a, const CFGNode *b)
++			portable_sort(frontier_nodes.begin(), frontier_nodes.end(), [](const CFGNode *a, const CFGNode *b)
+ 			          { return a->forward_post_visit_order > b->forward_post_visit_order; });
+ 
+ 			bool has_dup_frontier = false;
+@@ -7835,7 +7836,7 @@
+ 
+ 		// In the second pass, it's illegal to have more than two target headers, so we have to turn some
+ 		// headers into unreachable. The outermost scope wins.
+-		std::sort(node->headers.begin(), node->headers.end(),
++		portable_sort(node->headers.begin(), node->headers.end(),
+ 		          [](const CFGNode *a, const CFGNode *b) -> bool {
+ 			          if (a->dominates(b))
+ 				          return true;
+@@ -7924,7 +7925,7 @@
+ 	// We cannot fully trust a sort on post-visit order, since if we have two split blocks here,
+ 	// they will have the same post-visit order until we recompute them.
+ 	// FIXME: Should probably be smarter about this ...
+-	std::sort(node->headers.begin(), node->headers.end(),
++	portable_sort(node->headers.begin(), node->headers.end(),
+ 	          [](const CFGNode *a, const CFGNode *b) -> bool
+ 	          {
+ 		          if (a->dominates(b))
+@@ -8188,7 +8189,7 @@
+ 
+ 		if (frontiers.size() > 1)
+ 		{
+-			std::sort(frontiers.begin(), frontiers.end(), [](const CFGNode *a, const CFGNode *b) {
++			portable_sort(frontiers.begin(), frontiers.end(), [](const CFGNode *a, const CFGNode *b) {
+ 				return a->backward_post_visit_order < b->backward_post_visit_order;
+ 			});
+ 			frontiers.erase(std::unique(frontiers.begin(), frontiers.end()), frontiers.end());
+@@ -8711,7 +8712,7 @@
+ 
+ 	// Will recompute everything that was cleared out.
+ 	// Compute later nodes first. This way we avoid a potential recursive loop.
+-	std::sort(linear_visitation_cache.begin(), linear_visitation_cache.end(), [](const CFGNode *a, const CFGNode *b) {
++	portable_sort(linear_visitation_cache.begin(), linear_visitation_cache.end(), [](const CFGNode *a, const CFGNode *b) {
+ 		return a->forward_post_visit_order < b->forward_post_visit_order;
+ 	});
+ 
+diff --git a/util/portable_sort.hpp b/util/portable_sort.hpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..d254d5595b93ec43e23c13b0c35d4477fda9977d
+--- /dev/null
++++ b/util/portable_sort.hpp
+@@ -0,0 +1,220 @@
++/* SPDX-License-Identifier: MIT
++ *
++ * Introsort with the same pivot selection, partitioning, thresholds and heap
++ * fallback as libstdc++'s std::sort. std::sort is not stable, and standard
++ * libraries order equal elements differently. Using one algorithm everywhere
++ * keeps codegen identical regardless of which C++ standard library dxil-spirv
++ * is built against.
++ */
++
++#pragma once
++
++#include <algorithm>
++#include <iterator>
++#include <stddef.h>
++#include <utility>
++
++namespace dxil_spv
++{
++namespace portable_sort_detail
++{
++enum { threshold = 16 };
++
++template <typename It, typename Value, typename Compare>
++void sort_push_heap(It first, ptrdiff_t hole, ptrdiff_t top, Value value, Compare &comp)
++{
++	ptrdiff_t parent = (hole - 1) / 2;
++	while (hole > top && comp(*(first + parent), value))
++	{
++		*(first + hole) = std::move(*(first + parent));
++		hole = parent;
++		parent = (hole - 1) / 2;
++	}
++	*(first + hole) = std::move(value);
++}
++
++template <typename It, typename Value, typename Compare>
++void sort_adjust_heap(It first, ptrdiff_t hole, ptrdiff_t len, Value value, Compare &comp)
++{
++	const ptrdiff_t top = hole;
++	ptrdiff_t child = hole;
++	while (child < (len - 1) / 2)
++	{
++		child = 2 * (child + 1);
++		if (comp(*(first + child), *(first + (child - 1))))
++			child--;
++		*(first + hole) = std::move(*(first + child));
++		hole = child;
++	}
++	if ((len & 1) == 0 && child == (len - 2) / 2)
++	{
++		child = 2 * (child + 1);
++		*(first + hole) = std::move(*(first + (child - 1)));
++		hole = child - 1;
++	}
++	sort_push_heap(first, hole, top, std::move(value), comp);
++}
++
++template <typename It, typename Compare>
++void sort_pop_heap(It first, It last, It result, Compare &comp)
++{
++	auto value = std::move(*result);
++	*result = std::move(*first);
++	sort_adjust_heap(first, 0, last - first, std::move(value), comp);
++}
++
++template <typename It, typename Compare>
++void sort_make_heap(It first, It last, Compare &comp)
++{
++	const ptrdiff_t len = last - first;
++	if (len < 2)
++		return;
++	ptrdiff_t parent = (len - 2) / 2;
++	for (;;)
++	{
++		auto value = std::move(*(first + parent));
++		sort_adjust_heap(first, parent, len, std::move(value), comp);
++		if (parent == 0)
++			return;
++		parent--;
++	}
++}
++
++template <typename It, typename Compare>
++void sort_heap_sort(It first, It last, Compare &comp)
++{
++	sort_make_heap(first, last, comp);
++	while (last - first > 1)
++	{
++		--last;
++		sort_pop_heap(first, last, last, comp);
++	}
++}
++
++template <typename It, typename Compare>
++void sort_move_median_to_first(It result, It a, It b, It c, Compare &comp)
++{
++	using std::iter_swap;
++	if (comp(*a, *b))
++	{
++		if (comp(*b, *c))
++			iter_swap(result, b);
++		else if (comp(*a, *c))
++			iter_swap(result, c);
++		else
++			iter_swap(result, a);
++	}
++	else if (comp(*a, *c))
++		iter_swap(result, a);
++	else if (comp(*b, *c))
++		iter_swap(result, c);
++	else
++		iter_swap(result, b);
++}
++
++template <typename It, typename Compare>
++It sort_unguarded_partition(It first, It last, It pivot, Compare &comp)
++{
++	for (;;)
++	{
++		while (comp(*first, *pivot))
++			++first;
++		--last;
++		while (comp(*pivot, *last))
++			--last;
++		if (!(first < last))
++			return first;
++		std::iter_swap(first, last);
++		++first;
++	}
++}
++
++template <typename It, typename Compare>
++void sort_introsort_loop(It first, It last, int depth_limit, Compare &comp)
++{
++	while (last - first > ptrdiff_t(threshold))
++	{
++		if (depth_limit == 0)
++		{
++			sort_heap_sort(first, last, comp);
++			return;
++		}
++		--depth_limit;
++		It mid = first + (last - first) / 2;
++		sort_move_median_to_first(first, first + 1, mid, last - 1, comp);
++		It cut = sort_unguarded_partition(first + 1, last, first, comp);
++		sort_introsort_loop(cut, last, depth_limit, comp);
++		last = cut;
++	}
++}
++
++template <typename It, typename Compare>
++void sort_unguarded_linear_insert(It last, Compare &comp)
++{
++	auto value = std::move(*last);
++	It next = last;
++	--next;
++	while (comp(value, *next))
++	{
++		*last = std::move(*next);
++		last = next;
++		--next;
++	}
++	*last = std::move(value);
++}
++
++template <typename It, typename Compare>
++void sort_insertion_sort(It first, It last, Compare &comp)
++{
++	if (first == last)
++		return;
++	for (It i = first + 1; i != last; ++i)
++	{
++		if (comp(*i, *first))
++		{
++			auto value = std::move(*i);
++			std::move_backward(first, i, i + 1);
++			*first = std::move(value);
++		}
++		else
++			sort_unguarded_linear_insert(i, comp);
++	}
++}
++
++template <typename It, typename Compare>
++void sort_final_insertion_sort(It first, It last, Compare &comp)
++{
++	if (last - first > ptrdiff_t(threshold))
++	{
++		sort_insertion_sort(first, first + ptrdiff_t(threshold), comp);
++		for (It i = first + ptrdiff_t(threshold); i != last; ++i)
++			sort_unguarded_linear_insert(i, comp);
++	}
++	else
++		sort_insertion_sort(first, last, comp);
++}
++
++inline int floor_log2(size_t n)
++{
++	int result = 0;
++	while (n >>= 1)
++		result++;
++	return result;
++}
++}
++
++template <typename It, typename Compare>
++void portable_sort(It first, It last, Compare comp)
++{
++	if (first == last)
++		return;
++	portable_sort_detail::sort_introsort_loop(first, last, portable_sort_detail::floor_log2(size_t(last - first)) * 2, comp);
++	portable_sort_detail::sort_final_insertion_sort(first, last, comp);
++}
++
++template <typename It>
++void portable_sort(It first, It last)
++{
++	portable_sort(first, last, [](const auto &a, const auto &b) { return a < b; });
++}
++}
+
+base-commit: ec8c7961e59b74d70a6e285da1a4d71dc04c8d04

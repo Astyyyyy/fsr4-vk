@@ -1,0 +1,2 @@
+# Patch context preserves upstream whitespace; keep patch files portable.
+*.patch text eol=lf -whitespace

@@ -135,7 +135,7 @@ def pack(args):
             if deltas.reconstruct(targets[parent], blob) != target:
                 raise ValueError("delta reconstruction mismatch")
             row.update(kind="delta", base=parent)
-            row["file"] = str(Path(row["file"]).with_suffix(".delta"))
+            row["file"] = Path(row["file"]).with_suffix(".delta").as_posix()
         row.update(
             stored_size=len(blob), stored_sha256=hashlib.sha256(blob).hexdigest()
         )

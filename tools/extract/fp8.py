@@ -239,7 +239,7 @@ def extract(args):
             manifest["tiers"][tier].append(
                 {
                     "pass": pname,
-                    "file": str(out_file.relative_to(args.output)),
+                    "file": out_file.relative_to(args.output).as_posix(),
                     "blob_index": idx,
                     "offset_in_dll": pos,
                     "size": size,
@@ -258,7 +258,7 @@ def extract(args):
         wpath.write_bytes(wblob)
         digest = hashlib.sha256(wblob).hexdigest()
         manifest["weights"][pname] = {
-            "file": str(wpath.relative_to(args.output)),
+            "file": wpath.relative_to(args.output).as_posix(),
             "offset_in_dll": offset,
             "size": len(wblob),
             "sha256": digest,
