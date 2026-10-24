@@ -14,7 +14,7 @@ This project is not affiliated with or endorsed by AMD.
 
 ## Prepare assets
 
-Get `Kits/FidelityFX/signedbin/amd_fidelityfx_upscaler_dx12.dll` from
+Get `Samples/Upscalers/FidelityFX_FSR/dx12/x64/Release/amd_fidelityfx_upscaler_dx12.dll` from
 [AMD's FidelityFX SDK 2.3.0](https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK/releases/tag/v2.3.0).
 The tools require 4.1.1.2740 and verify the DLL hash automatically.
 
