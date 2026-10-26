@@ -57,13 +57,14 @@ inline ColorEndpointShaders selectColorEndpointShaders(const std::filesystem::pa
                          : options.inverted_depth          ? "render-mv-inverted-depth"
                                                            : "render-mv-normal-depth";
     const auto* exposure = options.auto_exposure ? "auto" : "external";
-    const auto prepass = root / "prepass" / fsr4_411::colorSpaceName(color) / motion / exposure /
-                         (options.motion_jitter_cancellation ? "jitter.spv" : "no-jitter.spv");
-    const auto postpass_root =
+    const auto endpoint_root =
         windows_fp8 && family == PostpassFamily::Shared
             ? root.parent_path().parent_path() / "windows/color-endpoints" / root.filename()
             : root;
-    auto postpass = postpass_root / "postpass" / fsr4_411::colorSpaceName(color);
+    const auto prepass = endpoint_root / "prepass" / fsr4_411::colorSpaceName(color) / motion /
+                         exposure /
+                         (options.motion_jitter_cancellation ? "jitter.spv" : "no-jitter.spv");
+    auto postpass = endpoint_root / "postpass" / fsr4_411::colorSpaceName(color);
     if (family != PostpassFamily::Shared) {
         postpass /= family == PostpassFamily::UltraPerformance ? "ultraperf" : "standard";
     }

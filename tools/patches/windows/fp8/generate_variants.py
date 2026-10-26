@@ -3,7 +3,7 @@
 # Copyright (C) 2026 fsr4-vk contributors.
 # See LICENSE in the project root.
 
-"""Generate Windows FP8 model and postpass variants using the pinned SPIRV-Tools."""
+"""Generate Windows FP8 model and endpoint shaders using the pinned SPIRV-Tools."""
 import argparse
 import hashlib
 import importlib.util
@@ -92,6 +92,7 @@ def generate(assets, output, stage='all', generated=None):
     catalog = Catalog(assets, generated)
     matrix = load('windows_fp8_matrix', HERE / 'matrix_io.py')
     postpass = load('windows_fp8_postpass', HERE / 'packed_postpass_loads.py')
+    vector_conversions = load('windows_fp8_vector_conversions', HERE / 'vector_conversions.py')
     output.mkdir(parents=True)
     records, mismatches = [], []
     report = dict(schema=1, complete=False, source=str(assets.resolve()),
@@ -103,12 +104,17 @@ def generate(assets, output, stage='all', generated=None):
         (output / 'generation-report.json').write_text(json.dumps(report, indent=2) + '\n')
 
     def emit(source_alias, target_alias, recipe, patcher, options, locked):
-        source = output / 'work/inputs' / source_alias
+        source = output / 'work' / f'input-{len(records):03d}.spv'
         source.parent.mkdir(parents=True, exist_ok=True)
         source.write_bytes(catalog.read(source_alias))
-        generated = output / 'work/outputs' / target_alias
+        generated = output / 'work' / f'output-{len(records):03d}.spv'
         generated.parent.mkdir(parents=True, exist_ok=True)
-        patch_report = patcher(source, generated, **options)
+        if patcher is None:
+            shutil.copyfile(source, generated)
+            patch_report = {}
+        else:
+            patch_report = patcher(source, generated, **options)
+        patch_report.update(vector_conversions.patch(generated, generated))
         blob = generated.read_bytes()
         digest = hashlib.sha256(blob).hexdigest()
         record = dict(source_alias=source_alias, alias=target_alias, recipe=recipe,
@@ -137,6 +143,15 @@ def generate(assets, output, stage='all', generated=None):
             raise ValueError('Model shaders differ from the production lock. Use the historical '
                              'Vulkan SDK 1.4.328.1 tools; do not replace assets. Mismatches: ' +
                              ', '.join(mismatches))
+    if stage in ('all', 'prepasses'):
+        sources = sorted(key for key in catalog.manifest['aliases']
+                         if key.startswith('fp8/shaders/4.1.1/color-endpoints/') and
+                         '/prepass/' in key)
+        if len(sources) != 144:
+            raise ValueError('Expected all three tiers and colour/motion/exposure/jitter prepasses')
+        for source in sources:
+            target = source.replace('/color-endpoints/', '/windows/color-endpoints/', 1)
+            emit(source, target, 'prepass', None, {}, False)
     if stage in ('all', 'postpasses'):
         sources = sorted(key for key in catalog.manifest['aliases']
                          if key.startswith('fp8/shaders/4.1.1/color-endpoints/') and
@@ -155,7 +170,7 @@ def main():
     parser.add_argument('output', type=Path)
     parser.add_argument('--spirv-tools', type=Path, required=True,
                         help='directory with spirv-as/dis/opt/val (SDK 1.4.328.1 for model hashes)')
-    parser.add_argument('--stage', choices=('all', 'models', 'postpasses'), default='all')
+    parser.add_argument('--stage', choices=('all', 'models', 'prepasses', 'postpasses'), default='all')
     args = parser.parse_args()
     os.environ['PATH'] = str(args.spirv_tools.resolve()) + os.pathsep + os.environ.get('PATH', '')
     for name in ('spirv-as', 'spirv-dis', 'spirv-opt', 'spirv-val'):
