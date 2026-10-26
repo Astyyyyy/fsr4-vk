@@ -91,6 +91,7 @@ def generate(assets, output, stage='all', generated=None):
         raise ValueError('Output must be outside source assets')
     catalog = Catalog(assets, generated)
     matrix = load('windows_fp8_matrix', HERE / 'matrix_io.py')
+    conversion_packing = load('windows_fp8_conversion_packing', HERE / 'conversion_packing.py')
     postpass = load('windows_fp8_postpass', HERE / 'packed_postpass_loads.py')
     vector_conversions = load('windows_fp8_vector_conversions', HERE / 'vector_conversions.py')
     output.mkdir(parents=True)
@@ -103,7 +104,7 @@ def generate(assets, output, stage='all', generated=None):
     def save():
         (output / 'generation-report.json').write_text(json.dumps(report, indent=2) + '\n')
 
-    def emit(source_alias, target_alias, recipe, patcher, options, locked):
+    def emit(source_alias, target_alias, recipe, patcher, options, locked, *, pack_conversions=False):
         source = output / 'work' / f'input-{len(records):03d}.spv'
         source.parent.mkdir(parents=True, exist_ok=True)
         source.write_bytes(catalog.read(source_alias))
@@ -114,6 +115,8 @@ def generate(assets, output, stage='all', generated=None):
             patch_report = {}
         else:
             patch_report = patcher(source, generated, **options)
+        if pack_conversions:
+            patch_report['conversion_packing'] = conversion_packing.patch(generated, generated)
         patch_report.update(vector_conversions.patch(generated, generated))
         blob = generated.read_bytes()
         digest = hashlib.sha256(blob).hexdigest()
@@ -138,7 +141,7 @@ def generate(assets, output, stage='all', generated=None):
             for index in range(1, 13):
                 recipe, options = model_recipe(tier, index)
                 emit(f'fp8/{tier}/pass{index}.spv', f'fp8/{tier}/pass{index}.win-opt.spv',
-                     recipe, matrix.patch, options, True)
+                     recipe, matrix.patch, options, True, pack_conversions=True)
         if mismatches:
             raise ValueError('Model shaders differ from the production lock. Use the historical '
                              'Vulkan SDK 1.4.328.1 tools; do not replace assets. Mismatches: ' +

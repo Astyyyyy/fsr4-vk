@@ -1638,120 +1638,120 @@
       "file": "fp8/shaders/4.1.1/patched/windows/1080/pass1.win-opt.delta",
       "kind": "delta",
       "base": 1,
-      "size": 197292,
-      "sha256": "ea7a593a8c21de54d7c50ed21e59120231971c9f86bc47b9120a92655589b5f2",
-      "stored_size": 197018,
-      "stored_sha256": "22ccf052c9f14486060557c54d5022a252477ee0a7a4351f30bfea52d40c8e8e"
+      "size": 194748,
+      "sha256": "277e79c2ad3afbe091553a4f1ee5ec98f46c16c51ebec91df34196f2f289c44a",
+      "stored_size": 194486,
+      "stored_sha256": "93e29d072ebaa0313bc84111d0bc4606e18cb3357a821c80a608bf0a9f75a451"
     },
     {
       "id": 164,
       "file": "fp8/shaders/4.1.1/patched/windows/1080/pass10.win-opt.delta",
       "kind": "delta",
       "base": 2,
-      "size": 166704,
-      "sha256": "8bbb4f44c3d41e2bf851eb395cd8794cbe682c31c788a60e5ab613e47be61a16",
-      "stored_size": 166430,
-      "stored_sha256": "0e4d9e5523b2814294cc5d771d9d6ca3c9e566dee2a94519fe71c3c816b41de6"
+      "size": 164464,
+      "sha256": "7fdca56b1a0c51840be0fc6f8eb653f6625c4f8fac61782625a0248a348ed2f9",
+      "stored_size": 164202,
+      "stored_sha256": "c339d653427c4cacb88d719e902672ca00b27e891aba4e6c002ba22243641819"
     },
     {
       "id": 165,
       "file": "fp8/shaders/4.1.1/patched/windows/1080/pass11.win-opt.delta",
       "kind": "delta",
       "base": 4,
-      "size": 80332,
-      "sha256": "2fe4611d379865b7f26a97a71eee313283a6e6aa48c6b7c3ef57b80266268abc",
-      "stored_size": 80070,
-      "stored_sha256": "117f8a3ddadfd3c6cade0f06fd17ea32fe0e550e5fcdfa41d34b037bcf19ab2a"
+      "size": 79496,
+      "sha256": "342acc151cfe3a0537c4a18867e8883bae52df0acb8fbe6f76268fd04b3875c9",
+      "stored_size": 79234,
+      "stored_sha256": "41eb4c3551247aebb69578060051df53adbedb37d8b0878cdb4102d40d294e10"
     },
     {
       "id": 166,
       "file": "fp8/shaders/4.1.1/patched/windows/1080/pass12.win-opt.delta",
       "kind": "delta",
       "base": 6,
-      "size": 198028,
-      "sha256": "e7696df87ddc38fcd2d800a6abbf55ca14e279ee903f5bbfcdbb13ed99d3050a",
-      "stored_size": 197754,
-      "stored_sha256": "5ee0d5f820e2b47cf13a225ea215bec1996269829ded6eb7aab542125e532306"
+      "size": 195484,
+      "sha256": "0520cabc9e429f68599beac1ba2fd6b189b834c62086c5a5dba0724897f5b5a8",
+      "stored_size": 195222,
+      "stored_sha256": "9f70c8aa51b8aff6c3e8ff6af4d1e6b4f0d26e21759351d2703e41ba744da4cc"
     },
     {
       "id": 167,
       "file": "fp8/shaders/4.1.1/patched/windows/1080/pass2.win-opt.delta",
       "kind": "delta",
       "base": 9,
-      "size": 198028,
-      "sha256": "67fa91a06d2ee48dfdb335cd0bac0fd13800fa138c18a7fad8e756c0e3bab504",
-      "stored_size": 197754,
-      "stored_sha256": "4dbbf2bbb35df3eb867ddc45b953701c71abe7f11679daf90bc095e5ad57d562"
+      "size": 195484,
+      "sha256": "4411882f28bcde6a04cb4e4e9bc030accf3fb381374299462204e8809faf926d",
+      "stored_size": 195222,
+      "stored_sha256": "6e8dc709ff800e2eb2401e15710fdf9f809809e186f12c0375d557fe084e78fb"
     },
     {
       "id": 168,
       "file": "fp8/shaders/4.1.1/patched/windows/1080/pass3.win-opt.delta",
       "kind": "delta",
       "base": 11,
-      "size": 35960,
-      "sha256": "1047cec7db43ab4b6c572bcba14875f42bdee4e199284d93d834b5ca72cf4346",
-      "stored_size": 35718,
-      "stored_sha256": "e0c47e52edc7305b7d9a7196fd88d709660970ea546cb664244000c70db25d49"
+      "size": 35664,
+      "sha256": "5a51eab26111d0dc85e7cbe3973222e9654bd11e42785a4d7b5b97bb4973ca5a",
+      "stored_size": 35405,
+      "stored_sha256": "42bfa38d28f9c4cc43dca4302b7a7f6a92392decd44ce02827e56b8b0b155f40"
     },
     {
       "id": 169,
       "file": "fp8/shaders/4.1.1/patched/windows/1080/pass4.win-opt.delta",
       "kind": "delta",
       "base": 13,
-      "size": 166704,
-      "sha256": "3fa5974a58e2617f14736fe500e7b8a8da204bdcfc750dde85062aa1126e7f39",
-      "stored_size": 166430,
-      "stored_sha256": "ba1810e6376b5c7215f928d77d967d337f36290ae6792e24c9fda4bacf1f0ed1"
+      "size": 164464,
+      "sha256": "8360b37e6478318be2c8f54c3d33a9d8704d2156fadd881baad62394329218dd",
+      "stored_size": 164202,
+      "stored_sha256": "27ff2ae5deb36e11c20b4e6ef5d886e21024ee7c296a030bfeb45c9f1189351d"
     },
     {
       "id": 170,
       "file": "fp8/shaders/4.1.1/patched/windows/1080/pass5.win-opt.delta",
       "kind": "delta",
       "base": 15,
-      "size": 166704,
-      "sha256": "956d47471c680d09eae7ff56961c06ddf6cfa5d63dfc3797bdb7509eddb00c1e",
-      "stored_size": 166430,
-      "stored_sha256": "179d6c46a83d7295d57c14fb2ecf3f3bd9fa01c00340e99ccf57c75c01f5f7a2"
+      "size": 164464,
+      "sha256": "1d8d0f8996b757b8cd70a5b42fd20883247ae7a2338ceda8720432ccbfb6d7e4",
+      "stored_size": 164202,
+      "stored_sha256": "0760b4f5f507150bab2a46c1c57deba624d5b1b08620a83c20b40c126448e053"
     },
     {
       "id": 171,
       "file": "fp8/shaders/4.1.1/patched/windows/1080/pass6.win-opt.delta",
       "kind": "delta",
       "base": 17,
-      "size": 102472,
-      "sha256": "e1be34c270fdda82fb5de697e8d1eb3712a1782ebdbab3e5e89c0f55545fefb3",
-      "stored_size": 102230,
-      "stored_sha256": "b15bc5e7c3ffe1866a8fc28ab2a791eafd4af9670bc656912ac069d98f87bf66"
+      "size": 101872,
+      "sha256": "ecbf5a80f99bdd341cfc3a44e9b849dcd15fe6e531d8148da0136c5dfc945c4c",
+      "stored_size": 101613,
+      "stored_sha256": "6d1dc072e4f6e24be66a0ed8a623a3c1fded4509de74bc01aa7eda47922be855"
     },
     {
       "id": 172,
       "file": "fp8/shaders/4.1.1/patched/windows/1080/pass7.win-opt.delta",
       "kind": "delta",
       "base": 19,
-      "size": 171028,
-      "sha256": "ce1105fee9dc45ed05895f4d1973fd02c41af5ea622e6c113c914681d679478b",
-      "stored_size": 170505,
-      "stored_sha256": "7770539041179a6d1beebe089c7fe47aa45bbfa93de4251104d926ce92306e83"
+      "size": 168900,
+      "sha256": "d01b7bd99435adbda6cb6c5ebbbeba96e7aebfab7207e6c15b024fe7ae81e2c9",
+      "stored_size": 168377,
+      "stored_sha256": "564911f3ac474c25c734406014f115c4f1aa547ae1a22e3971e1e57d506696c2"
     },
     {
       "id": 173,
       "file": "fp8/shaders/4.1.1/patched/windows/1080/pass8.win-opt.delta",
       "kind": "delta",
       "base": 21,
-      "size": 171044,
-      "sha256": "931c945e263608cf6ee9988082f4545d79464e716c111c6d8150f0567251e0a7",
-      "stored_size": 170521,
-      "stored_sha256": "da63eb1ed47ab9768b21d00f56b7d24b5831d3df13a62c309b002afd18617ee9"
+      "size": 168916,
+      "sha256": "21543c08547a6bdf1996104de7e5c08a9d54821a747c924e663453d6f3ad9056",
+      "stored_size": 168393,
+      "stored_sha256": "df95bcb4bc2e7f9be77676fb4602bf14a2a792dd4479140e3593d4772f418706"
     },
     {
       "id": 174,
       "file": "fp8/shaders/4.1.1/patched/windows/1080/pass9.win-opt.delta",
       "kind": "delta",
       "base": 23,
-      "size": 170592,
-      "sha256": "76123cc72472b1cf0092ad696aeb89166ab8afb17c568344889ef04274fb7215",
-      "stored_size": 170330,
-      "stored_sha256": "be6fe25912a7022c3ba304996389de7020a130ee6b96374cf5b9a54eec1ceaf0"
+      "size": 169224,
+      "sha256": "f614728948413090d2c74aacf4e684fb04e6a863a5f75ec0ada0c021577a55ca",
+      "stored_size": 168962,
+      "stored_sha256": "2090a1f4b2c5d2edb52c8ecd93654daae6fbe01592a4283d67930679b1649074"
     },
     {
       "id": 175,
@@ -1778,120 +1778,120 @@
       "file": "fp8/shaders/4.1.1/patched/windows/2160/pass1.win-opt.delta",
       "kind": "delta",
       "base": 33,
-      "size": 199028,
-      "sha256": "4cd8a0ecc13b6f6c1271a948cb3cb39d366098cac3c82f7a285cd1312634dd94",
-      "stored_size": 197014,
-      "stored_sha256": "08fcc86e3ff4be9317a77a69b9e3fbe70b889088e32ccf66ff305e2221a7fffb"
+      "size": 198580,
+      "sha256": "d738c3653c83f46b8cec06f15d54f72cd8c2e2305f9fa8f3e7a0b642f5b1154e",
+      "stored_size": 196566,
+      "stored_sha256": "2e24025673bc64c6b26038451a557b9d1983d8a8fcd7beee919b2714795c282b"
     },
     {
       "id": 178,
       "file": "fp8/shaders/4.1.1/patched/windows/2160/pass10.win-opt.delta",
       "kind": "delta",
       "base": 34,
-      "size": 166704,
-      "sha256": "54f68c4cf76261ffafda549697c8089f8628bb38da6d7ffe17459992162d6d1b",
-      "stored_size": 166430,
-      "stored_sha256": "d00b4b7901d69d3566e05872ca02c7a077c15d5e174ca9fe49ad668ee3d818f7"
+      "size": 164464,
+      "sha256": "69e752449b042ee6e30d2e1872c3d288adca74451b81fcd573c4d4b8b0cdc325",
+      "stored_size": 164202,
+      "stored_sha256": "d16bc304560c0c6b4f043e6c62e1bd3c7ca01cc270494b666ead557917d497ed"
     },
     {
       "id": 179,
       "file": "fp8/shaders/4.1.1/patched/windows/2160/pass11.win-opt.delta",
       "kind": "delta",
       "base": 36,
-      "size": 80332,
-      "sha256": "6dfc7772e86b80578f02a8b325e71589ad2850285942c1bdc258a3d82b6a4166",
-      "stored_size": 80070,
-      "stored_sha256": "d7fba2e4228d51371986fb4e862cd9328cd3e59d2305f71b87080d3f61ebf4c2"
+      "size": 79496,
+      "sha256": "01ee3b9384c3b82b6466322ed02a87379ca591b05b039cd7d8e5b9fa101dd75c",
+      "stored_size": 79234,
+      "stored_sha256": "86e202e6d9a61553cde05e6006811757db3f43f6078559c00382199226739ad9"
     },
     {
       "id": 180,
       "file": "fp8/shaders/4.1.1/patched/windows/2160/pass12.win-opt.delta",
       "kind": "delta",
       "base": 38,
-      "size": 199644,
-      "sha256": "e08f4460c6a552f47bc121ce67f59dfc45a1243a1d5d0135067ab72f6f3ab578",
-      "stored_size": 197612,
-      "stored_sha256": "8cdb84c59dac7f46d92ee09cfebe371951dda344350f02c1d7cf81b326d16b03"
+      "size": 199196,
+      "sha256": "c793f03cf97db3d3b7e62afb3ad51f2ece211135368fe17941491595b1d281f6",
+      "stored_size": 197178,
+      "stored_sha256": "dbc3a8b989157b35d8c34a205b3b364fe9c8742fc44f726a90975977ee5857c6"
     },
     {
       "id": 181,
       "file": "fp8/shaders/4.1.1/patched/windows/2160/pass2.win-opt.delta",
       "kind": "delta",
       "base": 41,
-      "size": 199644,
-      "sha256": "ddb7fc5deb926aeae43d9809de5b7d56acfc4b12178df1be881cd06c3bce0815",
-      "stored_size": 197634,
-      "stored_sha256": "c42ad7ae0bd077c3d0895eebafecc4c9d845c1d2fb1c37988c23c6995412fffb"
+      "size": 199196,
+      "sha256": "ce63581e65ef9315aff0f7e64326032044be3041a49e705da4c47964fd86fd80",
+      "stored_size": 197200,
+      "stored_sha256": "ce7a2435151f656924c69b1e1eadef203a1f7245e93ad80ed06b8dc1eca8c375"
     },
     {
       "id": 182,
       "file": "fp8/shaders/4.1.1/patched/windows/2160/pass3.win-opt.delta",
       "kind": "delta",
       "base": 43,
-      "size": 35960,
-      "sha256": "74c97e95024ae67704fc1e5129228c2964291f7d0b5867ea1dd0ef35992e0278",
-      "stored_size": 35718,
-      "stored_sha256": "44d82bef45b65fca9f2baebcf0fc40c2d7b9e598df849fdd1666a09cc158a5a7"
+      "size": 35664,
+      "sha256": "a4c67468d1d4b3f99281e6b09d295f69a2f80fb62df5bc30151c26bc57ebf71d",
+      "stored_size": 35405,
+      "stored_sha256": "ae3a3123f033583e05ed15e370aab365a02cbf02ba10a956322e55efdc64a928"
     },
     {
       "id": 183,
       "file": "fp8/shaders/4.1.1/patched/windows/2160/pass4.win-opt.delta",
       "kind": "delta",
       "base": 45,
-      "size": 166704,
-      "sha256": "a5ea0483ee4e940bbee49eff6ce61d02c4acb4ea044f9dfbcf41531f5cc56857",
-      "stored_size": 166430,
-      "stored_sha256": "c2330d9b85ac6d279c39e934401a8a6dc6bb250c9aa9f136aeb5a79d998d5847"
+      "size": 164464,
+      "sha256": "2bc8bfcb1bb994e16176ef83891f1aa53e823952a518cc0067166338d3b21ee0",
+      "stored_size": 164202,
+      "stored_sha256": "ade5190f129ca59f8962b4a95b850fb2815447466e182a9d7f5c987b59c1c3e5"
     },
     {
       "id": 184,
       "file": "fp8/shaders/4.1.1/patched/windows/2160/pass5.win-opt.delta",
       "kind": "delta",
       "base": 47,
-      "size": 166704,
-      "sha256": "6c85f856050f60a1812d509e469cf3a7a20485a390d7b472adf3c33746086200",
-      "stored_size": 166430,
-      "stored_sha256": "f5dcb30ecf678fde47d076a913ef2c6d289c1d45e90399d5d5a3cf47fd667630"
+      "size": 164464,
+      "sha256": "1246dec610041cae81fc8d4c99f7db7b2b1c76180646a3e4b13ab65dac9f418c",
+      "stored_size": 164202,
+      "stored_sha256": "707628c474af3d2c1fa0213c77a2cec353912edffaf0aa186915d9613f5fbcfd"
     },
     {
       "id": 185,
       "file": "fp8/shaders/4.1.1/patched/windows/2160/pass6.win-opt.delta",
       "kind": "delta",
       "base": 49,
-      "size": 102472,
-      "sha256": "1b44f03243f38c79dedcb3d739aad8eec2f098e054db3e7e223231b3f0af51d0",
-      "stored_size": 102230,
-      "stored_sha256": "f0b4d3ca997add2416a9004cbd279f87c779a445d798891c25b6585bc7336d49"
+      "size": 101872,
+      "sha256": "05a4798ec68ea1ba8e9396804017738069acbbd1d9a529f9997e1c8ad47f5a62",
+      "stored_size": 101613,
+      "stored_sha256": "e6abd395cd7bcc3680d1c528d0be5befb552f67b966732d03b69ea3224920c1b"
     },
     {
       "id": 186,
       "file": "fp8/shaders/4.1.1/patched/windows/2160/pass7.win-opt.delta",
       "kind": "delta",
       "base": 51,
-      "size": 171044,
-      "sha256": "8755a695dd800f58881a7e6be3c46334c13607f2f1b1289a88364caa74957cd4",
-      "stored_size": 170521,
-      "stored_sha256": "509e077a99833cf8d23d9556b76c78040fa15f01e7c825fac9db0c18852376e2"
+      "size": 168916,
+      "sha256": "39443492996519d2a8d1793bc3b34a2f12973ff07fa84d395459fda6474c533a",
+      "stored_size": 168393,
+      "stored_sha256": "22f6de6c9bc04fcda0c46da0faa3605b42b3c4a4fc336a86eeb5fb3b9be08332"
     },
     {
       "id": 187,
       "file": "fp8/shaders/4.1.1/patched/windows/2160/pass8.win-opt.delta",
       "kind": "delta",
       "base": 53,
-      "size": 171028,
-      "sha256": "aac11b7676c1abd21cdb6ca0b0ddf1b956962ba5dca50f4f47cca6ecd5609154",
-      "stored_size": 170505,
-      "stored_sha256": "67d2f06871d8ca674d24d38f9afe294dee5d6989cc160659f6b28ffc7be48d3b"
+      "size": 168900,
+      "sha256": "ff8875f758a9cf536094be6f70c726b414be2b2ce9f40ee7eb1a76437c6e544a",
+      "stored_size": 168377,
+      "stored_sha256": "9d25cc80d40ac29f333f3b02a0e0acafbdb7f477037fe4d8696994e9f9b86940"
     },
     {
       "id": 188,
       "file": "fp8/shaders/4.1.1/patched/windows/2160/pass9.win-opt.delta",
       "kind": "delta",
       "base": 55,
-      "size": 170592,
-      "sha256": "b07db35ce2d615fafa62c2758d386d2650ec827938eae47688db4f5a963c99d7",
-      "stored_size": 170330,
-      "stored_sha256": "10f01622ed8c5311343bc27e1985e07d63452983f162e4ffa1268bb5e48dfe22"
+      "size": 169224,
+      "sha256": "fa2a274a471bd8aa3a8e5ba8b6383212a087ae094b02b667fa6b968edc0e0d75",
+      "stored_size": 168962,
+      "stored_sha256": "d264c91f6388a44335c70c6e9431045e70a932a39b1dde9256c9f3bee5b03379"
     },
     {
       "id": 189,
@@ -7278,120 +7278,120 @@
       "file": "fp8/shaders/4.1.1/patched/windows/4320/pass1.win-opt.delta",
       "kind": "delta",
       "base": 547,
-      "size": 197292,
-      "sha256": "ef24a906cd823c99a844af2620f01b0f274715287ff86a28a27ffa5c343f60ae",
-      "stored_size": 197018,
-      "stored_sha256": "a22f4bbcb5280f30cc31c4b00264a80a4ce462ad500ab13ed14f07b1eeb8beaf"
+      "size": 194748,
+      "sha256": "2a56d4b9f07109266a7cda236aaf5dad5d0d18a8f27c25967cf8a3bceb87b89f",
+      "stored_size": 194486,
+      "stored_sha256": "3de5f9b8db431610ef017a2d566a8f916b3bca1f9234b9ea07805ffa3a41efe6"
     },
     {
       "id": 728,
       "file": "fp8/shaders/4.1.1/patched/windows/4320/pass10.win-opt.delta",
       "kind": "delta",
       "base": 548,
-      "size": 166704,
-      "sha256": "388e5f970bd536caf76c667ef3681527446778df6586e703d22930f0bcdf74fa",
-      "stored_size": 166430,
-      "stored_sha256": "cca246e52bca8547b0383c76d10ecc9649d78b449e203d60a595f5a29361596a"
+      "size": 164464,
+      "sha256": "4139b56968fe7586975c0df61caf0ce9ab09993e3c74b3f91898c83d692be922",
+      "stored_size": 164202,
+      "stored_sha256": "914a250ec9d1131162523a5bead3a2f7c120698bf42eb8edb714921fd4323ebf"
     },
     {
       "id": 729,
       "file": "fp8/shaders/4.1.1/patched/windows/4320/pass11.win-opt.delta",
       "kind": "delta",
       "base": 550,
-      "size": 80332,
-      "sha256": "94b795c202f59f7d5ab226fc5d521dbcef42d5acdd1899fd27ef567c385e224f",
-      "stored_size": 80070,
-      "stored_sha256": "71affaab294c6a4bdbe317eb26fe380fc961996c4e4b0414e639fb617ddb1540"
+      "size": 79496,
+      "sha256": "3c8fd55a03dc25d18e809bda9a82aa3f8a517c6cc84e50ec1618166c27c3e7f1",
+      "stored_size": 79234,
+      "stored_sha256": "0f078fe98ef12a95da2261c963cffcc06af5da37cb1942c14f791f492160c896"
     },
     {
       "id": 730,
       "file": "fp8/shaders/4.1.1/patched/windows/4320/pass12.win-opt.delta",
       "kind": "delta",
       "base": 552,
-      "size": 198028,
-      "sha256": "20f84f231a40d2bb4a35730893e3c809088904837876ee7d4c3c402493f31b34",
-      "stored_size": 197754,
-      "stored_sha256": "67d072d2d458673828516c155ef04e48c4c1d3e13ba9510659573186d44ad454"
+      "size": 195484,
+      "sha256": "147405a6074fa9e1101804975b691f92807f25b917e64665cb37403a552c5c9d",
+      "stored_size": 195222,
+      "stored_sha256": "4c794b9d55e56773d5e638d98ee09a5d994527a3bc8605691d38b61b31b90554"
     },
     {
       "id": 731,
       "file": "fp8/shaders/4.1.1/patched/windows/4320/pass2.win-opt.delta",
       "kind": "delta",
       "base": 555,
-      "size": 198028,
-      "sha256": "f347811179f829663e8afc2a11a5b7c3392b9f95f4fbb26c4aff447b1237503c",
-      "stored_size": 197754,
-      "stored_sha256": "43b2aa7a61eeef2e208ff14d85b179944e326c345ce2cabfc7f77309f45a3aee"
+      "size": 195484,
+      "sha256": "491666c0ba8a82b83ed470c567c85a0407164a2dc37c74a69e08ce7f18a89d46",
+      "stored_size": 195222,
+      "stored_sha256": "c2c86114ace3424cc23f2630809602b8450ef24a5e9eba2f2b473d5b335165ff"
     },
     {
       "id": 732,
       "file": "fp8/shaders/4.1.1/patched/windows/4320/pass3.win-opt.delta",
       "kind": "delta",
       "base": 557,
-      "size": 35960,
-      "sha256": "af16ee26ec575e9f0defd1678dcfade5c1a71234d576a80f111f05f109393e4c",
-      "stored_size": 35718,
-      "stored_sha256": "096ce97f40747ada0bfcac85c7d727ea41e89d11c6e0677147c6445d3a955408"
+      "size": 35664,
+      "sha256": "97d67a1b53c25cd40c9a075bdc25267434fffc0d315fe1240877699b9f7df6d1",
+      "stored_size": 35405,
+      "stored_sha256": "c4282039f2338df4f123c42d2e01daf4af353259559ecaab341569aa523d7633"
     },
     {
       "id": 733,
       "file": "fp8/shaders/4.1.1/patched/windows/4320/pass4.win-opt.delta",
       "kind": "delta",
       "base": 559,
-      "size": 166704,
-      "sha256": "7b4ce3fcf58782a36aab2b1f56aa6aeb2217ac9f15f5b695eedb608cf5671e0f",
-      "stored_size": 166430,
-      "stored_sha256": "59c449468f73f08f1b5c507fec7174643fe1c235fbaa0062a5411165c476649a"
+      "size": 164464,
+      "sha256": "9a580fd7dd0f1443891b47b9797a6fce321fdf48967c75a092fac5266ef1f773",
+      "stored_size": 164202,
+      "stored_sha256": "e8d86d44c071a6e18a0789a861bb824ca0eb4ea4e053f10fd261383d386fbe30"
     },
     {
       "id": 734,
       "file": "fp8/shaders/4.1.1/patched/windows/4320/pass5.win-opt.delta",
       "kind": "delta",
       "base": 561,
-      "size": 166704,
-      "sha256": "bc93cb31635b78d1b9fa234db240f62ea42cac68de6f34ae05993e30e40074df",
-      "stored_size": 166430,
-      "stored_sha256": "e0896ab5ab7d800459ef41d0f0c105f3e75f1e0386607ce568e6baa0447d9658"
+      "size": 164464,
+      "sha256": "ab1f446a8fc74b16958659bd91d606c823e10c39b4e75b95bd4c834fb6999996",
+      "stored_size": 164202,
+      "stored_sha256": "c551cfd1ea23daeabd3adf6434280c3ecabceffabab3febb05f66f2f4561df64"
     },
     {
       "id": 735,
       "file": "fp8/shaders/4.1.1/patched/windows/4320/pass6.win-opt.delta",
       "kind": "delta",
       "base": 563,
-      "size": 102472,
-      "sha256": "dae8b4ff069a3f1a3f8378465bc933ea70b2ed8248c0c99d799c05cd66dd4f5f",
-      "stored_size": 102230,
-      "stored_sha256": "938fb8db537f50814377b77c42438dddebd3d7f4d0fd0fc39ebffeddcf4cee84"
+      "size": 101872,
+      "sha256": "34c00ff8102c3799d8767009711744332d732268335462aa0ffd86818e103483",
+      "stored_size": 101613,
+      "stored_sha256": "183523adc244e1592f89ad51ab7e3cc0c8a6cf2b725cb4b0e5c898240ab5c0e6"
     },
     {
       "id": 736,
       "file": "fp8/shaders/4.1.1/patched/windows/4320/pass7.win-opt.delta",
       "kind": "delta",
       "base": 565,
-      "size": 171044,
-      "sha256": "abe0744f57fbc00420b2a6d0e8aee09476e21b1f680d6e39dddde672bfb2a75b",
-      "stored_size": 170521,
-      "stored_sha256": "daf5ebbf6e9240305d250223969759ba437914a91d889fa31be87cb73136457b"
+      "size": 168916,
+      "sha256": "ecd10f90687fef2e4fd4968fec12bde627ead2a7ed6f3e1f45fdb61e035da810",
+      "stored_size": 168393,
+      "stored_sha256": "2555ccaa094947cc9727bf87a340fbb982000225c25fe394c55e6f77728b66b1"
     },
     {
       "id": 737,
       "file": "fp8/shaders/4.1.1/patched/windows/4320/pass8.win-opt.delta",
       "kind": "delta",
       "base": 567,
-      "size": 171044,
-      "sha256": "6c0e53a4cdc1a3100628ab93357c67846db27079145429f07bf30ae62fba3a04",
-      "stored_size": 170521,
-      "stored_sha256": "4b810acac5d4add276282846331a4a8ea601976bfd33e8f9659588c8669b4ad7"
+      "size": 168916,
+      "sha256": "ad2f36d0bbef5c64047cc671dabec8cc5f7de557cc066124a15034e9478e64ff",
+      "stored_size": 168393,
+      "stored_sha256": "559fe197901d2b27bcc070500ab6313731b8cb477beab2481f125b60500cd037"
     },
     {
       "id": 738,
       "file": "fp8/shaders/4.1.1/patched/windows/4320/pass9.win-opt.delta",
       "kind": "delta",
       "base": 569,
-      "size": 170592,
-      "sha256": "4e52ba1dd0acdb384892ac1ed49432c6a73985f98dec8bbd6322d1673c836e6f",
-      "stored_size": 170330,
-      "stored_sha256": "a30e044a4d7c77fc5ad8944f73e630a3a176f55f275f3053b2cf060f29542c8c"
+      "size": 169224,
+      "sha256": "74be3d2ed4dd19755b1d5bd129611cd02355978f78806630eeb8cdf14e884444",
+      "stored_size": 168962,
+      "stored_sha256": "a405ca05d2cada6486f97ee7502fba5410ebdee8a591b3e89b93840e572dfa8a"
     },
     {
       "id": 739,
@@ -12229,8 +12229,8 @@
     "fp8/shaders/4.1.1/windows/color-endpoints/4320/prepass/srgb/render-mv-normal-depth/external/jitter.spv": 901,
     "fp8/shaders/4.1.1/windows/color-endpoints/4320/prepass/srgb/render-mv-normal-depth/external/no-jitter.spv": 902
   },
-  "source_payload_bytes": 71535408,
-  "stored_payload_bytes": 61880356,
+  "source_payload_bytes": 71476572,
+  "stored_payload_bytes": 61821626,
   "delta_payloads": 258,
   "max_delta_depth": 1,
   "int8_windows_variants": [
